@@ -1,5 +1,5 @@
 import re
-
+import sys
 
 def extract_names(filename):
     with open(filename, 'r') as file:
@@ -40,7 +40,45 @@ html_files = [
     "baby2008.html"
 ]
 
-# Build and print the [year, 'name rank', ... ] list for each HTML file
-for filename in html_files:
-    data_list = extract_names(filename)
-    print(data_list)
+# # Build and print the [year, 'name rank', ... ] list for each HTML file
+# for filename in html_files:
+#     data_list = extract_names(filename)
+#     print(data_list)
+
+
+def main():
+    # Command-line parsing
+    arguments = sys.argv[1:]  # Get all command-line arguments except the script name
+
+    if not arguments:
+        print('usage: [--summaryfile] file [file ...]')
+        sys.exit(1)
+
+    # Check if the first argument is '--summaryfile'
+    if arguments[0] == '--summaryfile':
+        summary_file_mode = True
+        # The summary data will be written to a file named 'summary.txt'
+        output_file = 'summary.txt'
+        files = arguments[1:]  # Skip the '--summaryfile' argument
+    else:
+        summary_file_mode = False
+        files = arguments
+
+    # Process each file
+    for filename in files:
+        data_list = extract_names(filename)
+
+        # Prepare the output text
+        output_text = '\n'.join(data_list)
+
+        if summary_file_mode:
+            # Write the output to the summary file
+            with open(output_file, 'a') as file:
+                file.write(output_text + '\n')
+        else:
+            # Print the output to the console
+            print(output_text)
+
+if __name__ == "__main__":
+    main()
+
